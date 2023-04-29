@@ -49,3 +49,8 @@ body {
     position: absolute;
     bottom: 0;
 }
+
+.timer_label {
+    font-size: 25px;
+    margin-left: 10px;
+}

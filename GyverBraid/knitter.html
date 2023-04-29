@@ -33,8 +33,7 @@
 <body>
     <div class="cont">
         <div class="ctrl_row">
-            <input type="range" id="size_range" style="width:100%" min="300" max="1000" value="600"
-                oninput="cv.width=this.value;cv.height=this.value;setCurrent();load();next()">
+            <input type="range" id="size_range" style="width:100%" min="300" max="1000" value="600">
         </div>
         <canvas onclick="next()" id="canvas" width="600" height="600"></canvas>
         <div class="gray_row">
@@ -48,9 +47,8 @@
                 <button class="inp" id="auto_stop">◼️️</button>
             </div>
             <div class="ctrl_row">
-                <input type="range" id="prd_range" style="width:90%" min="1" max="9" value="4"
-                    oninput="range_lbl.innerHTML=this.value" onchange="if(timer){stopTmr();startTmr();}">
-                <label style="font-size:25px;margin-left:10px" id="range_lbl">4</label>
+                <input type="range" id="prd_range" style="width:90%" min="1" max="9" value="4">
+                <label class="timer_label" id="range_lbl">4</label>
             </div>
             <div class="ctrl_row">
                 <input class="inp text" type="text" id="linedata" style="width:300px">
@@ -60,7 +58,6 @@
     </div>
 
     <script>
-
         let scale = 1.0;
         let lines;
         let amount = 0;
@@ -72,17 +69,34 @@
         let R = W2 - 30;
         let timer = null;
 
-        linedata.value = window.location.search.substr(1)
+        linedata.value = window.location.search.substr(1);
         load();
 
+        // Events handlers
         document.getElementById("auto_start").addEventListener("click", startTmr);
         document.getElementById("auto_stop").addEventListener("click", stopTmr);
+        document.getElementById("size_range").addEventListener("input", (e) => {
+            cv.width = e.target.value;
+            cv.height = e.target.value;
+            setCurrent();
+            load();
+            next();
+        });
+        document.getElementById("prd_range").addEventListener("input", (e) => {
+            range_lbl.innerHTML = e.target.value;
+            if (timer) {
+                stopTmr();
+                startTmr();
+            }
+        });
+
         document.addEventListener('keypress', (event) => {
             if (event.code == 'Space') next();
         }, false);
 
         if (localStorage.getItem(linedata.value) !== null) setCurrent(Number(localStorage.getItem(linedata.value)))
         next();
+
 
         function startTmr() {
             if (!timer) timer = setInterval(next, prd_range.value * 1000);
