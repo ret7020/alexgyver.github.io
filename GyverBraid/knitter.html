@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="favicon.svg">
     <link href="https://use.fontawesome.com/releases/v6.3.0/css/all.css" rel="stylesheet">
-    <link href="./styles/button.css" rel="stylesheet">
+    <link href="./styles/style.css" rel="stylesheet">
 
     <!-- Yandex.Metrika counter -->
     <script type="text/javascript">
@@ -34,7 +34,7 @@
     <div class="cont">
         <div class="ctrl_row">
             <input type="range" id="size_range" style="width:100%" min="300" max="1000" value="600"
-                oninput="cv.width=this.value;cv.height=this.value;load();">
+                oninput="cv.width=this.value;cv.height=this.value;setCurrent();load();next()">
         </div>
         <canvas onclick="next()" id="canvas" width="600" height="600"></canvas>
         <div class="gray_row">
@@ -54,7 +54,7 @@
             </div>
             <div class="ctrl_row">
                 <input class="inp text" type="text" id="linedata" style="width:300px">
-                <button class="btn-primary" onclick="load()">LOAD</button>
+                <button class="inp" onclick="load()">LOAD</button>
             </div>
         </div>
     </div>
@@ -70,19 +70,20 @@
         let cx = cv.getContext("2d");
         let W2 = cv.width / 2;
         let R = W2 - 30;
-        let s = document.location.toString();
         let timer = null;
 
-        s = s.slice(s.indexOf('?') + 1);
-        linedata.value = s;
-
+        linedata.value = window.location.search.substr(1)
         load();
 
         document.getElementById("auto_start").addEventListener("click", startTmr);
         document.getElementById("auto_stop").addEventListener("click", stopTmr);
+        document.addEventListener('keypress', (event) => {
+            if (event.code == 'Space') next();
+        }, false);
 
         if (localStorage.getItem(linedata.value) !== null) setCurrent(Number(localStorage.getItem(linedata.value)))
         next();
+
         function startTmr() {
             if (!timer) timer = setInterval(next, prd_range.value * 1000);
         }
@@ -91,17 +92,10 @@
             timer = null;
         }
 
-        document.addEventListener('keypress', (event) => {
-            if (event.code == 'Space') next();
-        }, false);
-
-
-
         function setCurrent(value = null) {
             let val;
             if (value !== null) val = value;
             else val = Number(current.value);
-            console.log(val);
             if (val < 0) val = 0;
             if (val > lines.length - 1) val = lines.length - 1;
             cur = val;
@@ -110,7 +104,9 @@
             scale = cv.width / 600;
             W2 = cv.width / 2;
             R = W2 - 30;
-            cur = 0;
+            if (localStorage.getItem(linedata.value) !== null) cur = Number(localStorage.getItem(linedata.value));
+            else cur = 0;
+
             try {
                 lines = atob(linedata.value).split('').map(function (v) { return v.codePointAt(0) });
             } catch (e) {
