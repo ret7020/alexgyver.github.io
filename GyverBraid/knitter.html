@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="favicon.svg">
     <link href="https://use.fontawesome.com/releases/v6.3.0/css/all.css" rel="stylesheet">
+    <link href="./styles/button.css" rel="stylesheet">
 
     <!-- Yandex.Metrika counter -->
     <script type="text/javascript">
@@ -30,69 +31,12 @@
 </head>
 
 <body>
-    <style>
-        body {
-            -moz-user-select: none;
-            -khtml-user-select: none;
-            user-select: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        .cont {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .inp {
-            font-size: 25px;
-            margin: 0px 10px;
-            height: 100%;
-            align-items: center;
-            display: flex;
-            justify-content: center;
-            border-radius: 5px;
-            padding: 0px;
-            min-width: 100px;
-        }
-
-        .text {
-            min-width: 100px;
-        }
-
-        .ctrl_row {
-            margin: 3px 10px;
-            width: 100%;
-            max-width: 400px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 40px;
-        }
-
-        .gray_row {
-            display: flex;
-            background: gray;
-            width: 100%;
-            justify-content: center;
-            padding: 10px 0px;
-            flex-direction: column;
-            align-items: center;
-            position: absolute;
-            bottom: 0;
-        }
-    </style>
-
     <div class="cont">
-
         <div class="ctrl_row">
             <input type="range" id="size_range" style="width:100%" min="300" max="1000" value="600"
                 oninput="cv.width=this.value;cv.height=this.value;load();">
         </div>
-
         <canvas onclick="next()" id="canvas" width="600" height="600"></canvas>
-
         <div class="gray_row">
             <div class="ctrl_row">
                 <input type="number" class="inp text" id="current">
@@ -110,7 +54,7 @@
             </div>
             <div class="ctrl_row">
                 <input class="inp text" type="text" id="linedata" style="width:300px">
-                <button class="inp" onclick="load()">LOAD</button>
+                <button class="btn-primary" onclick="load()">LOAD</button>
             </div>
         </div>
     </div>
