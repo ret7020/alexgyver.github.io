@@ -7,6 +7,7 @@
     <link rel="icon" href="favicon.svg">
     <link href="https://use.fontawesome.com/releases/v6.3.0/css/all.css" rel="stylesheet">
     <link href="./styles/style.css" rel="stylesheet">
+    <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
 
     <!-- Yandex.Metrika counter -->
     <script type="text/javascript">
@@ -35,6 +36,8 @@
         <div class="ctrl_row">
             <input type="range" id="size_range" style="width:100%" min="300" max="1000" value="600">
         </div>
+        <video id="preview" style="width: 30%; display: none;"></video>
+        <div id="camera_loading" style="display: none;">Loading camera... Please wait!</div>
         <canvas onclick="next()" id="canvas" width="600" height="600"></canvas>
         <div class="gray_row">
             <div class="ctrl_row">
@@ -53,11 +56,18 @@
             <div class="ctrl_row">
                 <input class="inp text" type="text" id="linedata" style="width:300px">
                 <button class="inp" onclick="load()">LOAD</button>
+                <button class="inp" id="scan_btn" onclick="scan_qr_code()">SCAN</button>
+                <button class="inp" id="stop_scan_btn" style="display: none;" onclick="stop_qr_scan()">STOP</button>
             </div>
         </div>
     </div>
 
     <script>
+        var scanner = new Instascan.Scanner({
+            video: document.getElementById('preview'), scanPeriod: 2,
+            mirror: false
+        });
+
         let scale = 1.0;
         let lines;
         let amount = 0;
@@ -70,6 +80,7 @@
         let timer = null;
 
         linedata.value = window.location.search.substr(1);
+        if (linedata.value === '') scan_qr_code(); // if empty request switch to qr code scanner mode
         load();
 
         // Events handlers
@@ -96,6 +107,45 @@
 
         if (localStorage.getItem(linedata.value) !== null) setCurrent(Number(localStorage.getItem(linedata.value)))
         next();
+
+        function stop_qr_scan() {
+            scanner.stop();
+            document.getElementById("canvas").style.display = "block";
+            document.getElementById("preview").style.display = "none";
+            document.getElementById("scan_btn").style.display = "block";
+            document.getElementById("stop_scan_btn").style.display = "none";
+            document.getElementById("camera_loading").style.display = "none";
+        }
+
+        function scan_qr_code() {
+            document.getElementById("scan_btn").style.display = "none";
+            document.getElementById("stop_scan_btn").style.display = "block";
+            document.getElementById("canvas").style.display = "none";
+            document.getElementById("camera_loading").style.display = "block";
+
+            scanner.addListener('scan', function (content) {
+                aler("Scanned");
+                stop_qr_scan();
+                linedata.value = content;
+                curr = 0;
+                load();
+            });
+            Instascan.Camera.getCameras().then(function (cameras) {
+                if (cameras.length > 0) {
+                    if (cameras.length === 1) scanner.start(cameras[0]); // pc
+                    else if (cameras.length > 1) scanner.start(cameras[1]); // mobile
+                    document.getElementById("preview").style.display = "block";
+                    document.getElementById("camera_loading").style.display = "none";
+                } else {
+                    console.error('No cameras found.');
+                    alert('No cameras found.');
+                }
+            }).catch(function (e) {
+                console.error(e);
+                alert(e);
+            });
+        }
+
 
 
         function startTmr() {

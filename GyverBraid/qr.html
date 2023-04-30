@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <video id="preview" style="width: 30%;"></video>
+    <script src="./qr-scanner.umd.min.js"></script>
+    
+    <script>
+        const qrScanner = new QrScanner(
+            document.getElementById("preview"),
+            result => console.log(result),
+            { /* your options or returnDetailedScanResult: true if you're not specifying any other options */ },
+        );
+        qrScanner.start();
+    </script>
+</body>
+
+</html>
